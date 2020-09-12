@@ -1,4 +1,4 @@
-
+import NoteManager from "./NoteManager";
 
 export default class MidiManager {
 
@@ -6,6 +6,8 @@ export default class MidiManager {
 
 	static setUpMidi() {
 		navigator.requestMIDIAccess().then(MidiManager.onMidiSucess, MidiManager.onMidiFail);
+
+		MidiManager.listenForMidiEvents((event) => NoteManager.onMidiEvent(event));
 	}
 
 	static onMidiSucess(midiAcess) {

@@ -1,4 +1,5 @@
 import MidiManager from './MidiManager';
+import NoteManager from './NoteManager';
 import React from 'react';
 
 const NUM_KEYS = 84;
@@ -10,7 +11,6 @@ const BLACK_KEY_WIDTH = 18;
 const BLACK_KEY_HEIGHT = 78;
 
 const WHITE_KEY_PATTERN = [true, false, true, false, true, true, false, true, false, true, false, true];
-const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 const KEY_SATURATION_RANGE = [20, 80];
 const KEY_LIGHTNESS_RANGE = [20, 80]
@@ -82,7 +82,7 @@ class KeyboardKey extends React.Component {
 	}
 
 	render() {
-		return <div style={this.props.white ? this.getWhiteKeyStyle() : this.getBlackKeyStyle(this.props.numKeysOffset)} onClick={() => this.toggleKey()}>
+		return <div style={this.props.white ? this.getWhiteKeyStyle() : this.getBlackKeyStyle(this.props.numKeysOffset)}>
 			
 			<div 
 				style={{
@@ -98,7 +98,7 @@ class KeyboardKey extends React.Component {
 					alignItems: 'center',
 				}}
 			>
-				{NOTE_NAMES[this.props.index % 12]}
+				{NoteManager.getNoteName(this.props.index)}
 			</div>
 		</div>
 	}
@@ -120,14 +120,14 @@ export default class Keyboard extends React.Component {
 	componentDidMount() {
 		MidiManager.setUpMidi();
 		MidiManager.listenForMidiEvents((event) => this.onMidiEvent(event));
+
 	}
 
 	onMidiEvent(event) {
 		let [eventType, noteIndex, velocity] = event;
-		console.log(eventType);
 
 		if (eventType === 144) { // note on
-			console.log(event)
+
 			if (noteIndex >= 24 && noteIndex < NUM_KEYS + 24) {
 				this.keyRefs[noteIndex - 24].current.enableKey(velocity);
 			} else {
@@ -139,9 +139,7 @@ export default class Keyboard extends React.Component {
 			} else {
 				console.log(`Note out of range: ${noteIndex}`);
 			}
-		} else {
-			console.log("Unhandled MIDI operation")
-		}
+		} 
 	}
 
 	

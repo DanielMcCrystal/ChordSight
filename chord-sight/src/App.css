@@ -34,3 +34,12 @@
   background-color: slategray;
 
 }
+
+.chordViewerContainer {
+  height: 4000px;
+  padding: 20px;
+
+  display: flex;
+  justify-content: center;
+
+}
