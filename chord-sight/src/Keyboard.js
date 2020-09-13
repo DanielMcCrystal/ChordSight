@@ -13,7 +13,7 @@ const BLACK_KEY_HEIGHT = 78;
 const WHITE_KEY_PATTERN = [true, false, true, false, true, true, false, true, false, true, false, true];
 
 const KEY_SATURATION_RANGE = [20, 80];
-const KEY_LIGHTNESS_RANGE = [20, 80]
+const KEY_LIGHTNESS_RANGE = [0, 80]
 
 class KeyboardKey extends React.Component {
 

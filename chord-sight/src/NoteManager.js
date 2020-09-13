@@ -9,8 +9,15 @@ export default class NoteManager {
 
 	static onChordChangeCallbacks = [];
 
-	static currentNoteDisabledTimeout = null;
+	static currentNoteDisabledTimeout = setTimeout(() => {}, 0);
 	static noteDisabledBuffer = 200;
+
+	static currentNoteEnabledTimeout = setTimeout(() => {}, 0);;
+	static noteEnabledBufferNoChordLocked = 40;
+	static noteEnabledBufferChordLocked = 400;
+
+	static chordLocked = false;
+	static chordOrigins = new Set();
 
 	static listenForChordChange(callback) {
 		NoteManager.onChordChangeCallbacks.push(callback);
@@ -28,13 +35,29 @@ export default class NoteManager {
 
 	static enableNote(noteIndex) {
 		NoteManager.activeNotes.add(noteIndex);
-		NoteManager.calculateChord();
+		clearTimeout(this.currentNoteEnabledTimeout);
+
+		NoteManager.currentNoteEnabledTimeout = setTimeout(
+			() => NoteManager.calculateChord(), 
+			this.chordLocked ? NoteManager.noteEnabledBufferChordLocked : NoteManager.noteEnabledBufferNoChordLocked
+		);
+
+
 	}
 
 	static disableNote(noteIndex) {
 		NoteManager.activeNotes.delete(noteIndex);
-		if (NoteManager.noteDisabledBuffer) {
-			clearTimeout(NoteManager.noteDisabledBuffer);
+
+		clearTimeout(NoteManager.currentNoteDisabledTimeout);
+
+		if (NoteManager.chordOrigins.has(noteIndex)) {
+			NoteManager.chordOrigins.delete(noteIndex);
+
+			if (NoteManager.chordOrigins.size < 2) {
+				NoteManager.chordOrigins = new Set();
+				NoteManager.chordLocked = false;
+				console.log("Chord unlocked");
+			}
 		}
 		NoteManager.currentNoteDisabledTimeout = setTimeout(() => NoteManager.calculateChord(), NoteManager.noteDisabledBuffer);
 	}
@@ -52,17 +75,25 @@ export default class NoteManager {
 
 	static calculateChord() {
 		let uniqueNotes = new Set(Array.from(NoteManager.activeNotes.values()).map((noteIndex) => NoteManager.getNoteName(noteIndex)));
+
 		
 		if (uniqueNotes.size < 3) {
 			NoteManager.currentChord = null;
 			return;
 		}
 
-		let newChord = detect(Array.from(uniqueNotes))[0];
+		let sortedNotes = [...NoteManager.activeNotes].sort().map((noteIndex) => NoteManager.getNoteName(noteIndex));
+
+		let newChord = detect(sortedNotes)[0];
 		if (newChord !== NoteManager.currentChord) {
 			NoteManager.lastChord = NoteManager.currentChord;
 			NoteManager.currentChord = newChord;
 
+			if (newChord !== '') {
+				NoteManager.chordLocked = true;
+				NoteManager.chordOrigins = new Set(NoteManager.activeNotes)
+			}
+			
 			NoteManager.onChordChangeCallbacks.forEach((callback) => callback(newChord))
 		}	
 	}

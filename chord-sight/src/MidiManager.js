@@ -11,7 +11,6 @@ export default class MidiManager {
 	}
 
 	static onMidiSucess(midiAcess) {
-		console.log(midiAcess);
 
 		let inputs = midiAcess.inputs;
 
