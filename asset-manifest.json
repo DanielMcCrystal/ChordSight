@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/ChordSight/static/css/main.751ab14c.chunk.css",
+    "main.js": "/ChordSight/static/js/main.4f50615a.chunk.js",
+    "main.js.map": "/ChordSight/static/js/main.4f50615a.chunk.js.map",
+    "runtime-main.js": "/ChordSight/static/js/runtime-main.12992220.js",
+    "runtime-main.js.map": "/ChordSight/static/js/runtime-main.12992220.js.map",
+    "static/js/2.796ea54a.chunk.js": "/ChordSight/static/js/2.796ea54a.chunk.js",
+    "static/js/2.796ea54a.chunk.js.map": "/ChordSight/static/js/2.796ea54a.chunk.js.map",
+    "index.html": "/ChordSight/index.html",
+    "precache-manifest.d0d4aeb325bad8dffb22898a96692db6.js": "/ChordSight/precache-manifest.d0d4aeb325bad8dffb22898a96692db6.js",
+    "service-worker.js": "/ChordSight/service-worker.js",
+    "static/css/main.751ab14c.chunk.css.map": "/ChordSight/static/css/main.751ab14c.chunk.css.map",
+    "static/js/2.796ea54a.chunk.js.LICENSE.txt": "/ChordSight/static/js/2.796ea54a.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.12992220.js",
+    "static/js/2.796ea54a.chunk.js",
+    "static/css/main.751ab14c.chunk.css",
+    "static/js/main.4f50615a.chunk.js"
+  ]
+}
