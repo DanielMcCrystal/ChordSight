@@ -41,8 +41,6 @@ export default class NoteManager {
 			() => NoteManager.calculateChord(), 
 			this.chordLocked ? NoteManager.noteEnabledBufferChordLocked : NoteManager.noteEnabledBufferNoChordLocked
 		);
-
-
 	}
 
 	static disableNote(noteIndex) {

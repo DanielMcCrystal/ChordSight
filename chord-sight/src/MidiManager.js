@@ -5,6 +5,7 @@ export default class MidiManager {
 	static listeners = [];
 
 	static setUpMidi() {
+		console.log(navigator)
 		navigator.requestMIDIAccess().then(MidiManager.onMidiSucess, MidiManager.onMidiFail);
 
 		MidiManager.listenForMidiEvents((event) => NoteManager.onMidiEvent(event));

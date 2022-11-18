@@ -10,7 +10,7 @@ export default class GuitarChordViewer extends React.Component {
 	componentDidMount() {
 		this.setUpChordBox();
 
-		//NoteManager.listenForChordChange((newChord) => { this.renderChord(newChord) });
+		NoteManager.listenForChordChange((newChord) => { this.renderChord(newChord) });
 	}
 
 	setUpChordBox() {
@@ -46,13 +46,46 @@ export default class GuitarChordViewer extends React.Component {
 		})
 	}
 
-	renderChord(chord) {
+	calculateBarres(fingers, frets) {
+
+		let barres = [];
+		let consideredFingers = new Set();
+
+		for (let i = 0; i<6; i++) {
+			let finger = fingers[i];
+			if (consideredFingers.has(finger) || frets[i] === '0' || frets[i] === 'x') {
+				continue;
+			}
+			let fromString = 6-i;
+			let toString = fromString;
+
+			for (let j = i+1; j<6; j++) {
+				if (fingers[j] === finger) {
+					toString = 6 - j;
+				}
+			}
+
+			if (toString !== fromString) {
+				barres.push({
+					fromString: fromString,
+					toString: toString,
+					fret: parseInt(frets[i]),
+				});
+
+				consideredFingers.add(finger);
+			}
+		}
+
+		return barres;
+	}
+
+	renderChord(chord_) {
 		let existingChord = document.querySelector('#chordbox');
 		existingChord.innerHTML = '';
 		this.setUpChordBox();
 
 
-		let chordInfo = Chord.get(chord);
+		let chordInfo = Chord.get(chord_);
 
 		if (!chordInfo) {
 			return;
@@ -67,21 +100,40 @@ export default class GuitarChordViewer extends React.Component {
 			return;
 		}
 
+		let frets = Array.from(fingeringInfo[0].frets);
+		let lowestFret = -1;
+		for (let i = 0; i<6; i++) {
+			if (frets[i] === 'x' || frets[i] === '0') {
+				continue;
+			}
+
+			let fretNum = parseInt(frets[i]);
+			if (fretNum < lowestFret) {
+				lowestFret = fretNum;
+			}
+		}
+
+		let positionOffset = 0;
+		if (lowestFret >= 3) {
+			positionOffset = lowestFret - 1;
+		}
+
  
-		let chordFingers = fingeringInfo[0].fingers.map((fret, i) => {
-			return [6-i, fret];
+		let chord = fingeringInfo[0].frets.map((fret, i) => {
+			return [6-i, fret, parseInt(fingeringInfo[0].fingers[i])];
 		});
 
-
-
-		console.log(chordFingers);
 		
 		this.chordbox.draw({
 			// array of [string, fret, label (optional)]
-			chord: chordFingers,
+			chord: chord,
 		  
 			// optional: tuning keys
-			tuning: ['E', 'A', 'D', 'G', 'B', 'E']
+			tuning: ['E', 'A', 'D', 'G', 'B', 'E'],
+
+			barres: this.calculateBarres(fingeringInfo[0].fingers, fingeringInfo[0].frets),
+
+			position: positionOffset,
 		  });
 	}
 
